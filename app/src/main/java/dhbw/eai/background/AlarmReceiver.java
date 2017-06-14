@@ -4,11 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public class BootReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
+
+    private static final String DHBW_KARLSUHE_ID = "ChIJ15FBwAYHl0cRwn_nSiwjXWI";
+
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
-            AlarmSetterService.setAlarm(context);
-        }
+       AlarmSetterService.setAlarm(context);
     }
 }

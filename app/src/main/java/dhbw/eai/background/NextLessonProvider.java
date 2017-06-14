@@ -19,10 +19,10 @@ final class NextLessonProvider {
     private NextLessonProvider() {
     }
 
-    static DateTime getNextLessonTime() throws IOException, ParserException {
+    static DateTime getTimeOfFirstLesson(final DateTime date) throws IOException, ParserException {
         final InputStream stream = getRapla();
         final Calendar calendar = parseICS(stream);
-        return getNextLesson(calendar);
+        return getFirstLesson(calendar, date);
     }
 
     private static InputStream getRapla() throws IOException {
@@ -39,7 +39,7 @@ final class NextLessonProvider {
         return new CalendarBuilder().build(stream);
     }
 
-    private static DateTime getNextLesson(final Calendar calendar){
+    private static DateTime getFirstLesson(final Calendar calendar, final DateTime date){
         final DateTime now = new DateTime();
         return now; //TODO Implement
     }

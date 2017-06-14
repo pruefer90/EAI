@@ -11,10 +11,13 @@ import com.google.android.gms.tasks.Tasks;
 
 import java.util.concurrent.ExecutionException;
 
-class LocationProvider {
+final class LocationProvider {
 
-    static Location getCurrentLocation(Context context) throws ExecutionException, InterruptedException {
-        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
+    private LocationProvider() {
+    }
+
+    static Location getCurrentLocation(final Context context) throws ExecutionException, InterruptedException {
+        final FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             throw new IllegalStateException("Permission for GPS not granted");
         }
