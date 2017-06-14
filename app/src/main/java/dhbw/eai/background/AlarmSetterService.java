@@ -3,8 +3,10 @@ package dhbw.eai.background;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import com.google.maps.errors.ApiException;
+import org.joda.time.DateTime;
 
-import java.util.Calendar;
+import java.io.IOException;
 
 public class AlarmSetterService extends BroadcastReceiver {
 
@@ -12,8 +14,12 @@ public class AlarmSetterService extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        final Calendar nextLessonTime = NextLessonProvider.getNextLessonTime();
-        final Calendar departureTime = DepartureTimeCalculator.calculateDepartureTime("",DHBW_KARLSUHE_ID,nextLessonTime); //TODO get from location from GPS
+        final DateTime nextLessonTime = NextLessonProvider.getNextLessonTime();
+        try {
+            final DateTime departureTime = DepartureTimeCalculator.calculateDepartureTime("",DHBW_KARLSUHE_ID,nextLessonTime); //TODO get from location from GPS
+        } catch (InterruptedException | ApiException | IOException e) {
+            e.printStackTrace();
+        }
 
         //TODO substract time to prepare
 

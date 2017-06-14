@@ -1,15 +1,14 @@
 package dhbw.eai.background;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import org.joda.time.DateTime;
 
 final class NextLessonProvider {
 
     private NextLessonProvider() {
     }
 
-    static Calendar getNextLessonTime(){
-        return new GregorianCalendar(); //TODO
+    static DateTime getNextLessonTime(){
+        return new DateTime(); //TODO
     }
 
 }
