@@ -3,11 +3,13 @@ package dhbw.eai.background;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import com.google.maps.errors.ApiException;
 import net.fortuna.ical4j.data.ParserException;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 public class AlarmSetterService extends BroadcastReceiver {
 
@@ -17,8 +19,9 @@ public class AlarmSetterService extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         try {
             final DateTime nextLessonTime = NextLessonProvider.getNextLessonTime();
-            final DateTime departureTime = DepartureTimeCalculator.calculateDepartureTime("",DHBW_KARLSUHE_ID,nextLessonTime); //TODO get from location from GPS
-        } catch (InterruptedException | ApiException | IOException | ParserException e) {
+            final Location currentLocation = LocationProvider.getCurrentLocation(context);
+            final DateTime departureTime = DepartureTimeCalculator.calculateDepartureTime(currentLocation,DHBW_KARLSUHE_ID,nextLessonTime);
+        } catch (InterruptedException | ApiException | IOException | ParserException | ExecutionException e) {
             e.printStackTrace();
         }
 

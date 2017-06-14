@@ -36,8 +36,7 @@ final class NextLessonProvider {
     }
 
     private static Calendar parseICS(final InputStream stream) throws IOException, ParserException {
-        final CalendarBuilder builder = new CalendarBuilder();
-        return builder.build(stream);
+        return new CalendarBuilder().build(stream);
     }
 
     private static DateTime getNextLesson(final Calendar calendar){
