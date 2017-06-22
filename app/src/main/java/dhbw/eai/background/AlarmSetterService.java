@@ -5,24 +5,25 @@ import android.location.Location;
 import android.util.Log;
 import com.google.maps.errors.ApiException;
 import dhbw.eai.Const;
-import net.fortuna.ical4j.data.ParserException;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public final class AlarmSetterService {
+final class AlarmSetterService {
 
     private static final String DHBW_KARLSUHE_ID = "ChIJ15FBwAYHl0cRwn_nSiwjXWI";
 
     private AlarmSetterService() {
     }
 
-    public static void setAlarm(final Context context) {
+    static void setAlarm(final Context context) {
         try {
             Log.d(Const.TAG,"Setting Alarm");
-            final DateTime now = new DateTime();
-            final DateTime nextLessonTime = NextLessonProvider.getTimeOfFirstLesson(now);
+            final LocalDate today = new LocalDate();
+            final DateTime nextLessonTime = NextLessonProvider.getTimeOfFirstLesson(today);
+            Log.d(Const.TAG,"Next lesson: " + nextLessonTime);
             final Location currentLocation = LocationProvider.getCurrentLocation(context);
             final DateTime departureTime = DepartureTimeCalculator.calculateDepartureTime(currentLocation,DHBW_KARLSUHE_ID,nextLessonTime);
 
@@ -31,9 +32,9 @@ public final class AlarmSetterService {
 
             //todo setAlarmClock
 
-            BackgroundScheduler.setNextAlarm(context,BackgroundScheduler.getNextAlarmTime(now,departureTime));
+            BackgroundScheduler.setNextAlarm(context,BackgroundScheduler.getNextAlarmTime(new DateTime(),departureTime));
 
-        } catch (InterruptedException | ApiException | IOException | ParserException | ExecutionException e) {
+        } catch (InterruptedException | ApiException | IOException | ExecutionException e) {
             e.printStackTrace();
         }
     }

@@ -1,65 +1,76 @@
 package dhbw.eai.background;
 
+import android.net.Uri;
 import android.util.Log;
 import dhbw.eai.Const;
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.filter.Filter;
-import net.fortuna.ical4j.filter.PeriodRule;
-import net.fortuna.ical4j.filter.Rule;
-import net.fortuna.ical4j.model.*;
-import net.fortuna.ical4j.model.component.CalendarComponent;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 final class NextLessonProvider {
 
-    private static final String RAPLA_URL = "https://rapla.dhbw-karlsruhe.de/rapla?key=6fVJKx_Dtdo50BamguknALlCl0uus2dLpVS89HNLYK4"; //TODO Make configurable
+    private static final String RAPLA_URL = "https://rapla.dhbw-karlsruhe.de/rapla?key=ah9tAVphicaj4FqCtMVJcgTuZsSn_DzllupDbBF8dLg1Y789fgGBIG3-7NKc8ZNSblTZag8NWNhDUUKfFeSuvg"; //TODO Make configurable
+    private static final DateTimeFormatter pattern = DateTimeFormat.forPattern("dd.MM.yy HH:mm").withLocale(Locale.GERMANY);
 
     private NextLessonProvider() {
     }
 
-    static DateTime getTimeOfFirstLesson(final DateTime date) throws IOException, ParserException {
-        final InputStream stream = getRapla();
-        final Calendar calendar = parseICS(stream);
-        return getFirstLesson(calendar, date);
+    static DateTime getTimeOfFirstLesson(final LocalDate date) throws IOException {
+        final Document raplaHtml = getRapla(date);
+        List<DateTime> lessons = parseLessons(raplaHtml);
+        return getFirstLessonOfDay(lessons,date);
     }
 
-    private static InputStream getRapla() throws IOException {
-        final URL url = new URL(RAPLA_URL);
+    private static Document getRapla(final LocalDate date) throws IOException {
+        final Uri uri = Uri.parse(RAPLA_URL);
+        final Uri withDate = uri.buildUpon().appendQueryParameter("day",String.valueOf(date.getDayOfMonth()))
+                .appendQueryParameter("month",String.valueOf(date.getMonthOfYear()))
+                .appendQueryParameter("year",String.valueOf(date.getYear())).build();
+        Log.d(Const.TAG,"Url: " + withDate);
+        final URL url = new URL(withDate.toString());
 
-        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.connect();
-        final int response = conn.getResponseCode();
-        Log.d(Const.TAG,"Response code: " + response);
-        return conn.getInputStream();
+        return Jsoup.parse(url,30000);
     }
 
-    private static Calendar parseICS(final InputStream stream) throws IOException, ParserException {
-        return new CalendarBuilder().build(stream);
+    private static String cutOffDayAndEndTime(String dateWithEndTime){
+        return dateWithEndTime.substring(3,dateWithEndTime.indexOf('-'));
     }
 
-    private static DateTime getFirstLesson(final Calendar calendar, DateTime date){
-        date = new DateTime(2017,06,14,0,0);
-        Period period = new Period(new net.fortuna.ical4j.model.DateTime(date.withTime(0,0,0,0).toDate()),new Dur(1,0,0,0));
-        Filter<CalendarComponent> filter = new Filter<>(new Rule[]{new PeriodRule<>(period)}, Filter.MATCH_ALL);
+    private static List<DateTime> parseLessons(Document raplaHtml){
+        Elements lessons = raplaHtml.select("span.tooltip");
+        List<DateTime> times = new ArrayList<>();
+        for (Element lesson : lessons) {
+            if("Lehrveranstaltung".equals(lesson.select("strong").first().text())) {
+                String lessonDate = lesson.select("div").get(1).text();
+                times.add(pattern.parseDateTime(cutOffDayAndEndTime(lessonDate)));
+            }
+        }
+        return times;
+    }
 
-        Collection<CalendarComponent> components = filter.filter(calendar.getComponents(Component.VEVENT));
-        Log.d(Const.TAG,"Found components: " + components.size());
-        for (CalendarComponent calendarComponent : components) {
-            Log.d(Const.TAG,"Component: " + calendarComponent.getName());
-            for (Property property : calendarComponent.getProperties()) {
-                Log.d(Const.TAG,"Property [" + property.getName() + ", " + property.getValue() + "]");
+    private static DateTime getFirstLessonOfDay(List<DateTime> lessons, LocalDate date){
+        DateTime firstLesson = null;
+
+        for (DateTime lesson : lessons) {
+            if(lesson.toLocalDate().equals(date)){
+                if(firstLesson == null || lesson.compareTo(firstLesson) < 0){
+                    firstLesson = lesson;
+                }
             }
         }
 
-        final DateTime now = new DateTime();
-        return now; //TODO Implement
+        return firstLesson;
     }
 
 }
