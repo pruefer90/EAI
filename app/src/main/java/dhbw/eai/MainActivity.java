@@ -2,6 +2,7 @@ package dhbw.eai;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        Intent intent;
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item){
+        final Intent intent;
         switch (item.getItemId()){
             case R.id.action_settings:
                 intent = new Intent(this, SettingsActivity.class);

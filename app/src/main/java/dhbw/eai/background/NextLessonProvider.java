@@ -1,6 +1,8 @@
 package dhbw.eai.background;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import dhbw.eai.Const;
 import org.joda.time.DateTime;
@@ -26,13 +28,15 @@ final class NextLessonProvider {
     private NextLessonProvider() {
     }
 
-    static DateTime getTimeOfFirstLesson(final LocalDate date) throws IOException {
+    @Nullable
+    static DateTime getTimeOfFirstLesson(@NonNull final LocalDate date) throws IOException {
         final Document raplaHtml = getRapla(date);
-        List<DateTime> lessons = parseLessons(raplaHtml);
+        final List<DateTime> lessons = parseLessons(raplaHtml);
         return getFirstLessonOfDay(lessons,date);
     }
 
-    private static Document getRapla(final LocalDate date) throws IOException {
+    @NonNull
+    private static Document getRapla(@NonNull final LocalDate date) throws IOException {
         final Uri uri = Uri.parse(RAPLA_URL);
         final Uri withDate = uri.buildUpon().appendQueryParameter("day",String.valueOf(date.getDayOfMonth()))
                 .appendQueryParameter("month",String.valueOf(date.getMonthOfYear()))
@@ -43,26 +47,29 @@ final class NextLessonProvider {
         return Jsoup.parse(url,30000);
     }
 
-    private static String cutOffDayAndEndTime(String dateWithEndTime){
+    @NonNull
+    private static String cutOffDayAndEndTime(@NonNull final String dateWithEndTime){
         return dateWithEndTime.substring(3,dateWithEndTime.indexOf('-'));
     }
 
-    private static List<DateTime> parseLessons(Document raplaHtml){
-        Elements lessons = raplaHtml.select("span.tooltip");
-        List<DateTime> times = new ArrayList<>();
-        for (Element lesson : lessons) {
+    @NonNull
+    private static List<DateTime> parseLessons(@NonNull final Document raplaHtml){
+        final Elements lessons = raplaHtml.select("span.tooltip");
+        final List<DateTime> times = new ArrayList<>();
+        for (final Element lesson : lessons) {
             if("Lehrveranstaltung".equals(lesson.select("strong").first().text())) {
-                String lessonDate = lesson.select("div").get(1).text();
+                final String lessonDate = lesson.select("div").get(1).text();
                 times.add(pattern.parseDateTime(cutOffDayAndEndTime(lessonDate)));
             }
         }
         return times;
     }
 
-    private static DateTime getFirstLessonOfDay(List<DateTime> lessons, LocalDate date){
+    @Nullable
+    private static DateTime getFirstLessonOfDay(@NonNull final List<DateTime> lessons, @NonNull final LocalDate date){
         DateTime firstLesson = null;
 
-        for (DateTime lesson : lessons) {
+        for (final DateTime lesson : lessons) {
             if(lesson.toLocalDate().equals(date)){
                 if(firstLesson == null || lesson.compareTo(firstLesson) < 0){
                     firstLesson = lesson;

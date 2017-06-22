@@ -1,6 +1,7 @@
 package dhbw.eai.background;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GaeRequestHandler;
@@ -21,7 +22,8 @@ final class DepartureTimeCalculator {
     private DepartureTimeCalculator() {
     }
 
-    static DateTime calculateDepartureTime(final Location from, final String to, final ReadableInstant arrivalTime) throws InterruptedException, ApiException, IOException {
+    @NonNull
+    static DateTime calculateDepartureTime(@NonNull final Location from, @NonNull final String to, @NonNull final ReadableInstant arrivalTime) throws InterruptedException, ApiException, IOException {
         final GeoApiContext context = new GeoApiContext(new GaeRequestHandler()).setApiKey(API_KEY);
 
         final DirectionsApiRequest req = DirectionsApi.newRequest(context);
