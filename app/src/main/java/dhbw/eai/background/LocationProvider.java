@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -16,7 +17,8 @@ final class LocationProvider {
     private LocationProvider() {
     }
 
-    static Location getCurrentLocation(final Context context) throws ExecutionException, InterruptedException {
+    @NonNull
+    static Location getCurrentLocation(@NonNull final Context context) throws ExecutionException, InterruptedException {
         final FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             throw new IllegalStateException("Permission for GPS not granted");
