@@ -13,6 +13,7 @@ public class SaveSharedPreference {
     static final String pref_time = "time";
     static final String pref_link = "link";
     static final String pref_way = "way";
+    static final String pref_status = "status";
 
     static SharedPreferences getSharedPreferences(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -36,6 +37,12 @@ public class SaveSharedPreference {
         editor.commit();
     }
 
+    public static void setPrefStatus(Context context, int status){
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(pref_status, status);
+        editor.commit();
+    }
+
     public static void setAll(Context context, int time, String link, int way){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putInt(pref_time, time);
@@ -56,11 +63,21 @@ public class SaveSharedPreference {
         return getSharedPreferences(context).getString(pref_link, "");
     }
 
+    public static int getPrefStatus(Context context){
+        return getSharedPreferences(context).getInt(pref_status, 0);
+    }
+
     public static void clear(Context context){
         SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.remove(pref_time);
         editor.remove(pref_link);
         editor.remove(pref_way);
+        editor.commit();
+    }
+
+    public static void clearAlarm(Context context){
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.remove(pref_status);
         editor.commit();
     }
 }

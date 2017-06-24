@@ -14,9 +14,14 @@ import android.widget.RadioGroup;
 
 import java.security.acl.Group;
 
+import dhbw.eai.background.SaveSharedPreference;
+
+import static android.R.attr.value;
+import static dhbw.eai.R.id.cancel_action;
 import static dhbw.eai.R.id.link;
 import static dhbw.eai.R.id.save;
 import static dhbw.eai.R.id.thing_proto;
+import static dhbw.eai.background.SaveSharedPreference.getPrefLink;
 
 /**
  * Created by mathz on 19.06.2017.
@@ -48,6 +53,29 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         saveButton = (Button) findViewById(R.id.save);
 
         saveButton.setOnClickListener(this);
+
+        int t = SaveSharedPreference.getPrefTime(this);
+        String l = SaveSharedPreference.getPrefLink(this);
+        int w = SaveSharedPreference.getPrefWay(this);
+
+        if (!l.isEmpty()) {
+            timeText.setText("" + t);
+            linkText.setText(l);
+            switch (w) {
+                case 1:
+                    wayButton1.setChecked(true);
+                    break;
+                case 2:
+                    wayButton2.setChecked(true);
+                    break;
+                case 3:
+                    wayButton3.setChecked(true);
+                    break;
+                case 4:
+                    wayButton4.setChecked(true);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -74,19 +102,30 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             String time = timeText.getText().toString();
             if (!time.isEmpty()){
                 String link = linkText.getText().toString();
-                if (link.isEmpty()){
+                if (!link.isEmpty()){
                     int select = wayGroup.getCheckedRadioButtonId();
-                    Log.d("EAI", "Checked" + select);
                     switch (select){
-                        case 1:
-
+                        case -1:
+                            break;
+                        case R.id.way1:
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 1);
+                            break;
+                        case R.id.way2:
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 2);
+                            break;
+                        case R.id.way3:
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 3);
+                            break;
+                        case R.id.way4:
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 4);
                             break;
                     }
+                    finish();
                 } else {
-                    // Link eingeben
+                    Log.d("DEBUG_EAI", "Link");
                 }
             } else {
-                // Zeit eingeben
+                Log.d("DEBUG_EAI", "Time");
             }
         }
     }

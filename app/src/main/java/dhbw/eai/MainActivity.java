@@ -8,11 +8,20 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 
-public class MainActivity extends AppCompatActivity {
+import static android.R.attr.onClick;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private SwitchCompat startSwitch;
+    private Button synchroButton;
     public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
 
     @Override
@@ -20,32 +29,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        startSwitch = (SwitchCompat) findViewById(R.id.switchCompat);
+        synchroButton = (Button) findViewById(R.id.synchro);
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
+        startSwitch.setOnClickListener(this);
+        synchroButton.setOnClickListener(this);
     }
 
     @Override
@@ -61,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
                     // contacts-related task you need to do.
 
                 } else {
+
+                    startSwitch.setChecked(false);
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -90,6 +80,30 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onClick(View v) {
+        if (v == startSwitch){
+            Log.d("DEBUG_EAI", "SWITCH");
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                }
+            } else {
+                Log.d("DEBUG_EAI", "PERMISSION_DENIED");
+                startSwitch.setChecked(false);
+            }
+        }
+        if (v == synchroButton){
+            Log.d("DEBUG_EAI", "BUTTON");
         }
     }
 }
