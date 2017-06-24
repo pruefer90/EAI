@@ -14,7 +14,7 @@ public class AlarmSetterIntent extends IntentService {
 
     @Override
     protected void onHandleIntent(@NonNull final Intent intent) {
-        Log.d(Const.TAG,"onHandleIntent");
+        Log.d(Const.TAG, "onHandleIntent");
         AlarmSetterService.setAlarm(this);
     }
 }

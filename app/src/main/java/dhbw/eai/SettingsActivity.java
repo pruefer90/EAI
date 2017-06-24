@@ -7,35 +7,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-
-import java.security.acl.Group;
-
+import android.widget.*;
+import com.google.maps.model.TravelMode;
 import dhbw.eai.background.SaveSharedPreference;
 
-import static android.R.attr.value;
-import static dhbw.eai.R.id.cancel_action;
 import static dhbw.eai.R.id.link;
-import static dhbw.eai.R.id.save;
-import static dhbw.eai.R.id.thing_proto;
-import static dhbw.eai.background.SaveSharedPreference.getPrefLink;
 
 /**
  * Created by mathz on 19.06.2017.
  */
 
-public class SettingsActivity extends AppCompatActivity implements View.OnClickListener{
+public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText timeText;
     private EditText linkText;
     private RadioGroup wayGroup;
-    private RadioButton wayButton1;
-    private RadioButton wayButton2;
-    private RadioButton wayButton3;
-    private RadioButton wayButton4;
     private Button saveButton;
 
     @Override
@@ -46,32 +32,32 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         timeText = (EditText) findViewById(R.id.time);
         linkText = (EditText) findViewById(link);
         wayGroup = (RadioGroup) findViewById(R.id.waygroup);
-        wayButton1 = (RadioButton) findViewById(R.id.way1);
-        wayButton2 = (RadioButton) findViewById(R.id.way2);
-        wayButton3 = (RadioButton) findViewById(R.id.way3);
-        wayButton4 = (RadioButton) findViewById(R.id.way4);
+        final Checkable wayButton1 = (RadioButton) findViewById(R.id.way1);
+        final Checkable wayButton2 = (RadioButton) findViewById(R.id.way2);
+        final Checkable wayButton3 = (RadioButton) findViewById(R.id.way3);
+        final Checkable wayButton4 = (RadioButton) findViewById(R.id.way4);
         saveButton = (Button) findViewById(R.id.save);
 
         saveButton.setOnClickListener(this);
 
-        int t = SaveSharedPreference.getPrefTime(this);
-        String l = SaveSharedPreference.getPrefLink(this);
-        int w = SaveSharedPreference.getPrefWay(this);
+        final int t = SaveSharedPreference.getPrefTime(this);
+        final String l = SaveSharedPreference.getPrefLink(this);
+        final TravelMode w = SaveSharedPreference.getPrefWay(this);
 
         if (!l.isEmpty()) {
-            timeText.setText("" + t);
+            timeText.setText(String.valueOf(t));
             linkText.setText(l);
             switch (w) {
-                case 1:
+                case WALKING:
                     wayButton1.setChecked(true);
                     break;
-                case 2:
+                case DRIVING:
                     wayButton2.setChecked(true);
                     break;
-                case 3:
+                case TRANSIT:
                     wayButton3.setChecked(true);
                     break;
-                case 4:
+                case BICYCLING:
                     wayButton4.setChecked(true);
                     break;
             }
@@ -86,8 +72,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull final MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_cancel:
                 finish();
                 return true;
@@ -97,35 +83,35 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == saveButton){
-            String time = timeText.getText().toString();
-            if (!time.isEmpty()){
-                String link = linkText.getText().toString();
-                if (!link.isEmpty()){
-                    int select = wayGroup.getCheckedRadioButtonId();
-                    switch (select){
+    public void onClick(final View v) {
+        if (v == saveButton) {
+            final String time = timeText.getText().toString();
+            if (time.isEmpty()) {
+                Log.d("DEBUG_EAI", "Time");
+            } else {
+                final String link = linkText.getText().toString();
+                if (link.isEmpty()) {
+                    Log.d("DEBUG_EAI", "Link");
+                } else {
+                    final int select = wayGroup.getCheckedRadioButtonId();
+                    switch (select) {
                         case -1:
                             break;
                         case R.id.way1:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 1);
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.WALKING);
                             break;
                         case R.id.way2:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 2);
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.DRIVING);
                             break;
                         case R.id.way3:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 3);
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.TRANSIT);
                             break;
                         case R.id.way4:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, 4);
+                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.BICYCLING);
                             break;
                     }
                     finish();
-                } else {
-                    Log.d("DEBUG_EAI", "Link");
                 }
-            } else {
-                Log.d("DEBUG_EAI", "Time");
             }
         }
     }

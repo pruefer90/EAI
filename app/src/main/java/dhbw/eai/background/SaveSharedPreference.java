@@ -1,83 +1,86 @@
 package dhbw.eai.background;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import com.google.maps.model.TravelMode;
 
 /**
  * Created by Manuel Wagenbach on 24.06.2017.
  */
 
-public class SaveSharedPreference {
-    static final String pref_time = "time";
-    static final String pref_link = "link";
-    static final String pref_way = "way";
-    static final String pref_status = "status";
+public final class SaveSharedPreference {
+    private static final String PREF_LINK = "link";
+    private static final String PREF_WAY = "way";
+    private static final String PREF_STATUS = "status";
+    private static final String PREF_TIME = "time";
 
-    static SharedPreferences getSharedPreferences(Context context){
+    private SaveSharedPreference() {
+    }
+
+    public static void setPrefTime(final Context context, final int time) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(PREF_TIME, time);
+        editor.apply();
+    }
+
+    private static SharedPreferences getSharedPreferences(final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static void setPrefTime(Context context, int time){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putInt(pref_time, time);
-        editor.commit();
+    public static void setPrefLink(final Context context, final String link) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(PREF_LINK, link);
+        editor.apply();
     }
 
-    public static void setPrefLink(Context context, String link){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(pref_link, link);
-        editor.commit();
+    public static void setPrefWay(final Context context, final TravelMode way) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(PREF_WAY, way.ordinal());
+        editor.apply();
     }
 
-    public static void setPrefWay(Context context, int way){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putInt(pref_way, way);
-        editor.commit();
+    public static void setPrefStatus(final Context context, final int status) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(PREF_STATUS, status);
+        editor.apply();
     }
 
-    public static void setPrefStatus(Context context, int status){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putInt(pref_status, status);
-        editor.commit();
+    public static void setAll(final Context context, final int time, final String link, final TravelMode way) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putInt(PREF_TIME, time);
+        editor.putString(PREF_LINK, link);
+        editor.putInt(PREF_WAY, way.ordinal());
+        editor.apply();
     }
 
-    public static void setAll(Context context, int time, String link, int way){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putInt(pref_time, time);
-        editor.putString(pref_link, link);
-        editor.putInt(pref_way, way);
-        editor.commit();
+    public static int getPrefTime(final Context context) {
+        return getSharedPreferences(context).getInt(PREF_TIME, 0);
     }
 
-    public static int getPrefTime(Context context){
-        return getSharedPreferences(context).getInt(pref_time, 0);
+    public static TravelMode getPrefWay(final Context context) {
+        return TravelMode.values()[getSharedPreferences(context).getInt(PREF_WAY, 0)];
     }
 
-    public static int getPrefWay(Context context){
-        return getSharedPreferences(context).getInt(pref_way, 0);
+    public static String getPrefLink(final Context context) {
+        return getSharedPreferences(context).getString(PREF_LINK, "");
     }
 
-    public static String getPrefLink(Context context){
-        return getSharedPreferences(context).getString(pref_link, "");
+    public static int getPrefStatus(final Context context) {
+        return getSharedPreferences(context).getInt(PREF_STATUS, 0);
     }
 
-    public static int getPrefStatus(Context context){
-        return getSharedPreferences(context).getInt(pref_status, 0);
+    public static void clear(final Context context) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.remove(PREF_TIME);
+        editor.remove(PREF_LINK);
+        editor.remove(PREF_WAY);
+        editor.apply();
     }
 
-    public static void clear(Context context){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.remove(pref_time);
-        editor.remove(pref_link);
-        editor.remove(pref_way);
-        editor.commit();
-    }
-
-    public static void clearAlarm(Context context){
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.remove(pref_status);
-        editor.commit();
+    public static void clearAlarm(final Context context) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.remove(PREF_STATUS);
+        editor.apply();
     }
 }

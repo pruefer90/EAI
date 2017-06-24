@@ -14,15 +14,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import dhbw.eai.background.AlarmSetterIntent;
 
-import static android.R.attr.onClick;
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SwitchCompat startSwitch;
     private Button synchroButton;
-    public static int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION =1;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -37,29 +34,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1 : {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+    public void onRequestPermissionsResult(final int requestCode,
+                                           @NonNull final String[] permissions, @NonNull final int[] grantResults) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    startSwitch.setChecked(false);
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            startSwitch.setChecked(false);
         }
     }
 
@@ -71,9 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull final MenuItem item){
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         final Intent intent;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
@@ -83,27 +63,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void onClick(View v) {
-        if (v == startSwitch){
+    @Override
+    public void onClick(final View v) {
+        if (v == startSwitch) {
             Log.d("DEBUG_EAI", "SWITCH");
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
 
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)) {
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                            MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-                }
-            } else {
-                Log.d("DEBUG_EAI", "PERMISSION_DENIED");
-                startSwitch.setChecked(false);
+                final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
         }
-        if (v == synchroButton){
+        if (v == synchroButton) {
             Log.d("DEBUG_EAI", "BUTTON");
+            final Intent alarmSetter = new Intent(getApplicationContext(), AlarmSetterIntent.class);
+            startService(alarmSetter);
         }
     }
 }
