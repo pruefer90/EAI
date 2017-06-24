@@ -3,6 +3,7 @@ package dhbw.eai;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,7 +76,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 String link = linkText.getText().toString();
                 if (link.isEmpty()){
                     int select = wayGroup.getCheckedRadioButtonId();
-
+                    Log.d("EAI", "Checked" + select);
                     switch (select){
                         case 1:
 
