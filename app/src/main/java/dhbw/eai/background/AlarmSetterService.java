@@ -26,14 +26,14 @@ final class AlarmSetterService {
     static void setAlarm(@NonNull final Context context) {
         try {
             Log.d(Const.TAG, "Setting Alarm");
-            //            final LocalDate today = new LocalDate();
+            //            final LocalDate today = new LocalDate();//TODO
 
             final LocalDate today = new LocalDate(2017, 6, 21);
             final Maybe<DateTime> nextLessonTime = NextLessonProvider.getTimeOfFirstLesson(SaveSharedPreference.getPrefLink(context), today).subscribeOn(Schedulers.io());
             final Single<Location> currentLocation = LocationProvider.getCurrentLocation(context).subscribeOn(Schedulers.io());
             nextLessonTime.zipWith(currentLocation.toMaybe(), new BiFunction<DateTime, Location, DateTime>() {
                 @Override
-                public DateTime apply(@io.reactivex.annotations.NonNull final DateTime nextLessonTime, @io.reactivex.annotations.NonNull final Location currentLocation) throws Exception {
+                public DateTime apply(@io.reactivex.annotations.NonNull final DateTime nextLessonTime, @io.reactivex.annotations.NonNull final Location currentLocation) throws InterruptedException, com.google.maps.errors.ApiException, IOException {
                     Log.d(Const.TAG, "Next lesson: " + nextLessonTime);
                     Log.d(Const.TAG, "Location: " + currentLocation);
                     return DepartureTimeCalculator.calculateDepartureTime(context, currentLocation, DHBW_KARLSUHE_ID, nextLessonTime);
@@ -50,9 +50,8 @@ final class AlarmSetterService {
                     Log.d(Const.TAG, "Departure Time: " + departureTime);
                     final DateTime wakeTime = departureTime.minusMinutes(SaveSharedPreference.getPrefTime(context));
                     Log.d(Const.TAG, "Wake Time: " + wakeTime);
-
-                    //todo setAlarmClock
-
+                    ClockSetter.setAlarmClock(context,wakeTime);
+                    Log.d(Const.TAG,"Done");
                     BackgroundScheduler.setNextAlarm(context, BackgroundScheduler.getNextAlarmTime(new DateTime(), departureTime));
                 }
 
@@ -66,7 +65,7 @@ final class AlarmSetterService {
                     Log.d(Const.TAG, "No lessons today");
                 }
             });
-        } catch (@NonNull IOException e) {
+        } catch (@NonNull final IOException e) {
             e.printStackTrace();
         }
     }
