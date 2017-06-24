@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import java.security.acl.Group;
 
+import static dhbw.eai.R.id.link;
 import static dhbw.eai.R.id.save;
 import static dhbw.eai.R.id.thing_proto;
 
@@ -37,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_settings);
 
         timeText = (EditText) findViewById(R.id.time);
-        linkText = (EditText) findViewById(R.id.link);
+        linkText = (EditText) findViewById(link);
         wayGroup = (RadioGroup) findViewById(R.id.waygroup);
         wayButton1 = (RadioButton) findViewById(R.id.way1);
         wayButton2 = (RadioButton) findViewById(R.id.way2);
@@ -71,7 +72,20 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if (v == saveButton){
             String time = timeText.getText().toString();
             if (!time.isEmpty()){
+                String link = linkText.getText().toString();
+                if (link.isEmpty()){
+                    int select = wayGroup.getCheckedRadioButtonId();
 
+                    switch (select){
+                        case 1:
+
+                            break;
+                    }
+                } else {
+                    // Link eingeben
+                }
+            } else {
+                // Zeit eingeben
             }
         }
     }
