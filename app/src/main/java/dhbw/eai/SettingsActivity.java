@@ -94,22 +94,25 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     Log.d("DEBUG_EAI", "Link");
                 } else {
                     final int select = wayGroup.getCheckedRadioButtonId();
+                    final TravelMode way;
                     switch (select) {
-                        case -1:
-                            break;
                         case R.id.way1:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.WALKING);
+                            way = TravelMode.WALKING;
                             break;
                         case R.id.way2:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.DRIVING);
+                            way = TravelMode.DRIVING;
                             break;
                         case R.id.way3:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.TRANSIT);
+                            way = TravelMode.TRANSIT;
                             break;
                         case R.id.way4:
-                            SaveSharedPreference.setAll(this, Integer.parseInt(time), link, TravelMode.BICYCLING);
+                            way = TravelMode.BICYCLING;
+                            break;
+                        default:
+                            way = TravelMode.UNKNOWN;
                             break;
                     }
+                    SaveSharedPreference.setAll(this, Integer.parseInt(time), link, way);
                     finish();
                 }
             }

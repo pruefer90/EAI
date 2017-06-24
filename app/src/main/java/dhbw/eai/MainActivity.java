@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import dhbw.eai.background.AlarmSetterIntent;
+import dhbw.eai.background.SaveSharedPreference;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         startSwitch = (SwitchCompat) findViewById(R.id.switchCompat);
         synchroButton = (Button) findViewById(R.id.synchro);
+
+        startSwitch.setSelected(SaveSharedPreference.getPrefActive(this) && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
 
         startSwitch.setOnClickListener(this);
         synchroButton.setOnClickListener(this);
@@ -67,15 +70,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(final View v) {
         if (v == startSwitch) {
             Log.d("DEBUG_EAI", "SWITCH");
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                SaveSharedPreference.setPrefActive(this,startSwitch.isSelected());
+            }else{
                 final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
         }
-        if (v == synchroButton) {
+        if (v == synchroButton && startSwitch.isSelected()) {
             Log.d("DEBUG_EAI", "BUTTON");
             final Intent alarmSetter = new Intent(getApplicationContext(), AlarmSetterIntent.class);
             startService(alarmSetter);

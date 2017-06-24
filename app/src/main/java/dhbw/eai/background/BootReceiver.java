@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(@NonNull final Context context, @NonNull final Intent intent) {
-        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+        if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction()) && SaveSharedPreference.getPrefActive(context)) {
             AlarmSetterService.setAlarm(context);
         }
     }

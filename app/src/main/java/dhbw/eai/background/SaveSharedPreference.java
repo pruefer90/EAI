@@ -14,6 +14,7 @@ public final class SaveSharedPreference {
     private static final String PREF_WAY = "way";
     private static final String PREF_STATUS = "status";
     private static final String PREF_TIME = "time";
+    private static final String PREF_ACTIVE = "active";
 
     private SaveSharedPreference() {
     }
@@ -46,6 +47,12 @@ public final class SaveSharedPreference {
         editor.apply();
     }
 
+    public static void setPrefActive(final Context context, final boolean active) {
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putBoolean(PREF_ACTIVE, active);
+        editor.apply();
+    }
+
     public static void setAll(final Context context, final int time, final String link, final TravelMode way) {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putInt(PREF_TIME, time);
@@ -68,6 +75,10 @@ public final class SaveSharedPreference {
 
     public static int getPrefStatus(final Context context) {
         return getSharedPreferences(context).getInt(PREF_STATUS, 0);
+    }
+
+    public static boolean getPrefActive(final Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_ACTIVE, false);
     }
 
     public static void clear(final Context context) {
