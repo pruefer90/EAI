@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 final class AlarmSetterService {
 
-    private static final String DHBW_KARLSUHE_ID = "ChIJ15FBwAYHl0cRwn_nSiwjXWI";
+    private static final String DHBW_KARLSUHE_ID = "place_id:ChIJ15FBwAYHl0cRwn_nSiwjXWI";
 
     private AlarmSetterService() {
     }
@@ -27,8 +27,9 @@ final class AlarmSetterService {
             //TODO there is a slight chance that there's no lessons today...
             Log.d(Const.TAG,"Next lesson: " + nextLessonTime);
             final Location currentLocation = LocationProvider.getCurrentLocation(context);
+            Log.d(Const.TAG,"Location: " + currentLocation);
             final DateTime departureTime = DepartureTimeCalculator.calculateDepartureTime(currentLocation,DHBW_KARLSUHE_ID,nextLessonTime);
-
+            Log.d(Const.TAG,"Departure Time: " + departureTime);
 
             //TODO substract time to prepare
 
