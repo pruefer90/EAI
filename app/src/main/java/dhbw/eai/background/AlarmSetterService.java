@@ -52,7 +52,7 @@ final class AlarmSetterService {
                     if(wasLastBeforeAlarm(wakeTime, now)) {
                         Log.d(Const.TAG,"Setting alarm");
                         ClockSetter.setAlarmClock(context, wakeTime);
-                        BackgroundScheduler.setNextAlarm(context, now.plusHours(12));
+                        BackgroundScheduler.setNextAlarm(context, now.plusDays(1).withHourOfDay(1));
                     } else {
                         BackgroundScheduler.setNextAlarm(context, now.plusHours(1));
                     }
