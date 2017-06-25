@@ -3,6 +3,7 @@ package dhbw.eai.background;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import com.google.maps.model.TravelMode;
 
 /**
@@ -35,7 +36,7 @@ public final class SaveSharedPreference {
         editor.apply();
     }
 
-    public static void setPrefWay(final Context context, final TravelMode way) {
+    public static void setPrefWay(final Context context, @NonNull final TravelMode way) {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putInt(PREF_WAY, way.ordinal());
         editor.apply();
@@ -53,7 +54,7 @@ public final class SaveSharedPreference {
         editor.apply();
     }
 
-    public static void setAll(final Context context, final int time, final String link, final TravelMode way) {
+    public static void setAll(final Context context, final int time, final String link, @NonNull final TravelMode way) {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putInt(PREF_TIME, time);
         editor.putString(PREF_LINK, link);

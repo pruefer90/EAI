@@ -12,7 +12,6 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 final class LocationProvider {
 
@@ -32,7 +31,7 @@ final class LocationProvider {
                 }
                 final LocationRequest request = new LocationRequest();
                 request.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-                return rxLocation.location().updates(request, 10, TimeUnit.SECONDS).firstOrError();
+                return rxLocation.location().updates(request).firstOrError();
             }
         });
 

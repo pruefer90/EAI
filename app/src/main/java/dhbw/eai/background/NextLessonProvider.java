@@ -65,7 +65,7 @@ final class NextLessonProvider {
     private static Maybe<DateTime> getFirstLessonOfDay(@NonNull final Iterable<DateTime> lessons, @NonNull final LocalDate date) {
         return Observable.fromIterable(lessons).filter(new Predicate<DateTime>() {
             @Override
-            public boolean test(@io.reactivex.annotations.NonNull final DateTime dateTime) throws Exception {
+            public boolean test(@NonNull @io.reactivex.annotations.NonNull final DateTime dateTime) throws Exception {
                 return dateTime.toLocalDate().equals(date);
             }
         }).sorted().firstElement();
