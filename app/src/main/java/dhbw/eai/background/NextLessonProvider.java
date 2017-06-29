@@ -6,6 +6,9 @@ import android.util.Log;
 import dhbw.eai.Const;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -21,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Callable;
 
 final class NextLessonProvider {
 
@@ -30,10 +34,23 @@ final class NextLessonProvider {
     }
 
     @NonNull
-    static Maybe<DateTime> getTimeOfFirstLesson(@NonNull final String rapla_URL, @NonNull final LocalDate date) throws IOException {
-        final Document raplaHtml = getRapla(rapla_URL, date);
-        final List<DateTime> lessons = parseLessons(raplaHtml);
-        return getFirstLessonOfDay(lessons, date);
+    static Maybe<DateTime> getTimeOfFirstLesson(@NonNull final String rapla_URL, @NonNull final LocalDate date) {
+        return Single.fromCallable(new Callable<Document>() {
+            @Override
+            public Document call() throws Exception {
+                return getRapla(rapla_URL, date);
+            }
+        }).flatMapObservable(new Function<Document, ObservableSource<DateTime>>() {
+            @Override
+            public ObservableSource<DateTime> apply(@io.reactivex.annotations.NonNull Document document) throws Exception {
+                return parseLessons(document);
+            }
+        }).filter(new Predicate<DateTime>() {
+            @Override
+            public boolean test(@NonNull @io.reactivex.annotations.NonNull final DateTime dateTime) throws Exception {
+                return dateTime.toLocalDate().equals(date);
+            }
+        }).sorted().firstElement();
     }
 
     @NonNull
@@ -49,7 +66,7 @@ final class NextLessonProvider {
     }
 
     @NonNull
-    private static List<DateTime> parseLessons(@NonNull final Document raplaHtml) {
+    private static Observable<DateTime> parseLessons(@NonNull final Document raplaHtml) {
         final Elements lessons = raplaHtml.select("span.tooltip");
         final List<DateTime> times = new ArrayList<>();
         for (final Element lesson : lessons) {
@@ -58,18 +75,9 @@ final class NextLessonProvider {
                 times.add(pattern.parseDateTime(cutOffDayAndEndTime(lessonDate)));
             }
         }
-        return times;
+        return Observable.fromIterable(times);
     }
 
-    @NonNull
-    private static Maybe<DateTime> getFirstLessonOfDay(@NonNull final Iterable<DateTime> lessons, @NonNull final LocalDate date) {
-        return Observable.fromIterable(lessons).filter(new Predicate<DateTime>() {
-            @Override
-            public boolean test(@NonNull @io.reactivex.annotations.NonNull final DateTime dateTime) throws Exception {
-                return dateTime.toLocalDate().equals(date);
-            }
-        }).sorted().firstElement();
-    }
 
     @NonNull
     private static String cutOffDayAndEndTime(@NonNull final String dateWithEndTime) {

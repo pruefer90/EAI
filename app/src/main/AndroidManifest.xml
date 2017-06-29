@@ -32,6 +32,7 @@
             </intent-filter>
         </receiver>
         <service android:name=".background.AlarmSetterIntent" android:exported="false"/>
+        <service android:name=".background.DirectSetterIntent" android:exported="false"/>
     </application>
 
 </manifest>

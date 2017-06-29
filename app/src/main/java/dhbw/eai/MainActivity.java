@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import dhbw.eai.background.AlarmSetterIntent;
+import dhbw.eai.background.DirectSetterIntent;
 import dhbw.eai.background.SaveSharedPreference;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 SaveSharedPreference.setPrefActive(this,startSwitch.isChecked());
                 if(startSwitch.isChecked()){
-                    callBackgroundService();
+                    callBackgroundService(AlarmSetterIntent.class);
                 }
             }else{
                 final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -84,12 +85,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (v == synchroButton && startSwitch.isChecked()) {
             Log.d("DEBUG_EAI", "BUTTON");
-            callBackgroundService();
+            callBackgroundService(DirectSetterIntent.class);
         }
     }
 
-    private void callBackgroundService(){
-        final Intent alarmSetter = new Intent(getApplicationContext(), AlarmSetterIntent.class);
+    private void callBackgroundService(Class<?> intent){
+        final Intent alarmSetter = new Intent(getApplicationContext(), intent);
         startService(alarmSetter);
     }
 }
