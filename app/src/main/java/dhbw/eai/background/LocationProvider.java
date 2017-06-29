@@ -21,7 +21,6 @@ final class LocationProvider {
     @NonNull
     static Single<Location> getCurrentLocation(@NonNull final Context context) {
 
-
         return Single.defer(new Callable<SingleSource<Location>>() {
             @Override
             public SingleSource<Location> call() throws IllegalStateException {
@@ -34,7 +33,6 @@ final class LocationProvider {
                 return rxLocation.location().updates(request).firstOrError();
             }
         });
-
 
     }
 

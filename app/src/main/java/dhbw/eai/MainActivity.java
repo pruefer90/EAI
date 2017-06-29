@@ -75,14 +75,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v == startSwitch) {
             Log.d("DEBUG_EAI", "SWITCH");
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                SaveSharedPreference.setPrefActive(this,startSwitch.isChecked());
-                if(startSwitch.isChecked()){
+                SaveSharedPreference.setPrefActive(this, startSwitch.isChecked());
+                if (startSwitch.isChecked()) {
                     callBackgroundService(AlarmSetterIntent.class);
-                }else{
-                    final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+                } else {
+                    final AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                     BackgroundScheduler.cancelOutstandingIntents(this, alarmMgr);
                 }
-            }else{
+            } else {
                 final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void callBackgroundService(Class<?> intent){
+    private void callBackgroundService(final Class<?> intent) {
         final Intent alarmSetter = new Intent(getApplicationContext(), intent);
         startService(alarmSetter);
     }
