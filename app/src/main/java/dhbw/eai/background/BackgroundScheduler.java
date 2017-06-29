@@ -9,14 +9,14 @@ import android.util.Log;
 import dhbw.eai.Const;
 import org.joda.time.ReadableInstant;
 
-final class BackgroundScheduler {
+public final class BackgroundScheduler {
 
     private BackgroundScheduler() {
     }
 
     private static final int BACKGROUND_ID = 42;
 
-    private static void cancelOutstandingIntents(@NonNull final Context context, @NonNull final AlarmManager alarmMgr){
+    public static void cancelOutstandingIntents(@NonNull final Context context, @NonNull final AlarmManager alarmMgr){
         final Intent intent = new Intent(context, AlarmSetterService.class);
         final PendingIntent alarmIntent = PendingIntent.getBroadcast(context, BACKGROUND_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmMgr.cancel(alarmIntent);
