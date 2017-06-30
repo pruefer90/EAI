@@ -33,10 +33,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         timeText = (EditText) findViewById(R.id.time);
         linkText = (EditText) findViewById(link);
         wayGroup = (RadioGroup) findViewById(R.id.waygroup);
-        final Checkable wayButton1 = (RadioButton) findViewById(R.id.way1);
-        final Checkable wayButton2 = (RadioButton) findViewById(R.id.way2);
-        final Checkable wayButton3 = (RadioButton) findViewById(R.id.way3);
-        final Checkable wayButton4 = (RadioButton) findViewById(R.id.way4);
+        final Checkable wayButton1 = (Checkable) findViewById(R.id.way1);
+        final Checkable wayButton2 = (Checkable) findViewById(R.id.way2);
+        final Checkable wayButton3 = (Checkable) findViewById(R.id.way3);
+        final Checkable wayButton4 = (Checkable) findViewById(R.id.way4);
         saveButton = (Button) findViewById(R.id.save);
 
         saveButton.setOnClickListener(this);

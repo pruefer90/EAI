@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -88,11 +87,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (SaveSharedPreference.getPrefLink(this) != null){
                         callBackgroundService(AlarmSetterIntent.class);
                     }
-                }else{
+                } else {
                     final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
                     BackgroundScheduler.cancelOutstandingIntents(this, alarmMgr);
                 }
-            }else{
+            } else {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
                     startSwitch.setChecked(false);
                 }
@@ -108,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void callBackgroundService(Class<?> intent){
+    private void callBackgroundService(final Class<?> intent) {
         final Intent alarmSetter = new Intent(getApplicationContext(), intent);
         startService(alarmSetter);
     }

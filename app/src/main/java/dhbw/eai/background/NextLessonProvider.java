@@ -21,8 +21,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
@@ -36,13 +34,15 @@ final class NextLessonProvider {
     @NonNull
     static Maybe<DateTime> getTimeOfFirstLesson(@NonNull final String rapla_URL, @NonNull final LocalDate date) {
         return Single.fromCallable(new Callable<Document>() {
+            @NonNull
             @Override
             public Document call() throws Exception {
                 return getRapla(rapla_URL, date);
             }
         }).flatMapObservable(new Function<Document, ObservableSource<DateTime>>() {
+            @NonNull
             @Override
-            public ObservableSource<DateTime> apply(@io.reactivex.annotations.NonNull Document document) throws Exception {
+            public ObservableSource<DateTime> apply(@NonNull @io.reactivex.annotations.NonNull final Document document) throws Exception {
                 return parseLessons(document);
             }
         }).filter(new Predicate<DateTime>() {
@@ -66,18 +66,22 @@ final class NextLessonProvider {
     }
 
     @NonNull
-    private static Observable<DateTime> parseLessons(@NonNull final Document raplaHtml) {
+    private static ObservableSource<DateTime> parseLessons(@NonNull final Document raplaHtml) {
         final Elements lessons = raplaHtml.select("span.tooltip");
-        final List<DateTime> times = new ArrayList<>();
-        for (final Element lesson : lessons) {
-            if ("Lehrveranstaltung".equals(lesson.select("strong").first().text())) {
-                final String lessonDate = lesson.select("div").get(1).text();
-                times.add(pattern.parseDateTime(cutOffDayAndEndTime(lessonDate)));
-            }
-        }
-        return Observable.fromIterable(times);
-    }
 
+        return Observable.fromIterable(lessons).filter(new Predicate<Element>() {
+            @Override
+            public boolean test(@NonNull @io.reactivex.annotations.NonNull final Element lesson) throws Exception {
+                return "Lehrveranstaltung".equals(lesson.select("strong").first().text());
+            }
+        }).map(new Function<Element, DateTime>() {
+            @Override
+            public DateTime apply(@NonNull @io.reactivex.annotations.NonNull final Element lesson) throws Exception {
+                final String lessonDate = lesson.select("div").get(1).text();
+                return pattern.parseDateTime(cutOffDayAndEndTime(lessonDate));
+            }
+        });
+    }
 
     @NonNull
     private static String cutOffDayAndEndTime(@NonNull final String dateWithEndTime) {
