@@ -93,8 +93,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                         Toast.LENGTH_SHORT).show();
             } else {
                 String link = linkText.getText().toString();
-                String split[] = link.split("&");
-                link = split[0];
                 if (link.isEmpty()) {
                     Log.d("DEBUG_EAI", "Link");
                     Toast.makeText(getBaseContext(), "Der Rapla Link fehlt!",
