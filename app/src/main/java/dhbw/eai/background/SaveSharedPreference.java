@@ -13,7 +13,6 @@ import com.google.maps.model.TravelMode;
 public final class SaveSharedPreference {
     private static final String PREF_LINK = "link";
     private static final String PREF_WAY = "way";
-    private static final String PREF_STATUS = "status";
     private static final String PREF_TIME = "time";
     private static final String PREF_ACTIVE = "active";
 
@@ -39,12 +38,6 @@ public final class SaveSharedPreference {
     public static void setPrefWay(final Context context, @NonNull final TravelMode way) {
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putInt(PREF_WAY, way.ordinal());
-        editor.apply();
-    }
-
-    public static void setPrefStatus(final Context context, final int status) {
-        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putInt(PREF_STATUS, status);
         editor.apply();
     }
 
@@ -74,25 +67,7 @@ public final class SaveSharedPreference {
         return getSharedPreferences(context).getString(PREF_LINK, "");
     }
 
-    public static int getPrefStatus(final Context context) {
-        return getSharedPreferences(context).getInt(PREF_STATUS, 0);
-    }
-
     public static boolean getPrefActive(final Context context) {
         return getSharedPreferences(context).getBoolean(PREF_ACTIVE, false);
-    }
-
-    public static void clear(final Context context) {
-        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.remove(PREF_TIME);
-        editor.remove(PREF_LINK);
-        editor.remove(PREF_WAY);
-        editor.apply();
-    }
-
-    public static void clearAlarm(final Context context) {
-        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.remove(PREF_STATUS);
-        editor.apply();
     }
 }

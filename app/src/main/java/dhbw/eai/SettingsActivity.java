@@ -11,6 +11,7 @@ import android.widget.*;
 import com.google.maps.model.TravelMode;
 import dhbw.eai.background.SaveSharedPreference;
 
+import static dhbw.eai.R.id.action_cancel;
 import static dhbw.eai.R.id.link;
 
 /**
@@ -88,32 +89,43 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             final String time = timeText.getText().toString();
             if (time.isEmpty()) {
                 Log.d("DEBUG_EAI", "Time");
+                Toast.makeText(getBaseContext(), "Die Aufstehzeit fehlt!",
+                        Toast.LENGTH_SHORT).show();
             } else {
-                final String link = linkText.getText().toString();
+                String link = linkText.getText().toString();
+                String split[] = link.split("&");
+                link = split[0];
                 if (link.isEmpty()) {
                     Log.d("DEBUG_EAI", "Link");
+                    Toast.makeText(getBaseContext(), "Der Rapla Link fehlt!",
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     final int select = wayGroup.getCheckedRadioButtonId();
                     final TravelMode way;
-                    switch (select) {
-                        case R.id.way1:
-                            way = TravelMode.WALKING;
-                            break;
-                        case R.id.way2:
-                            way = TravelMode.DRIVING;
-                            break;
-                        case R.id.way3:
-                            way = TravelMode.TRANSIT;
-                            break;
-                        case R.id.way4:
-                            way = TravelMode.BICYCLING;
-                            break;
-                        default:
-                            way = TravelMode.UNKNOWN;
-                            break;
+                    if (select == -1){
+                        Toast.makeText(getBaseContext(), "Die Bewegungsmethode fehlt!",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        switch (select) {
+                            case R.id.way1:
+                                way = TravelMode.WALKING;
+                                break;
+                            case R.id.way2:
+                                way = TravelMode.DRIVING;
+                                break;
+                            case R.id.way3:
+                                way = TravelMode.TRANSIT;
+                                break;
+                            case R.id.way4:
+                                way = TravelMode.BICYCLING;
+                                break;
+                            default:
+                                way = TravelMode.UNKNOWN;
+                                break;
+                        }
+                        SaveSharedPreference.setAll(this, Integer.parseInt(time), link, way);
+                        finish();
                     }
-                    SaveSharedPreference.setAll(this, Integer.parseInt(time), link, way);
-                    finish();
                 }
             }
         }

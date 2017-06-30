@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import dhbw.eai.background.AlarmSetterIntent;
 import dhbw.eai.background.BackgroundScheduler;
 import dhbw.eai.background.DirectSetterIntent;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,10 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-        final Intent intent;
         switch (item.getItemId()) {
             case R.id.action_settings:
-                intent = new Intent(this, SettingsActivity.class);
+                Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
             default:
@@ -72,17 +74,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(final View v) {
+        if (SaveSharedPreference.getPrefLink(this).isEmpty()) {
+            Toast.makeText(getBaseContext(), "Es fehlen noch Angaben!",
+                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
         if (v == startSwitch) {
             Log.d("DEBUG_EAI", "SWITCH");
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 SaveSharedPreference.setPrefActive(this,startSwitch.isChecked());
                 if(startSwitch.isChecked()){
-                    callBackgroundService(AlarmSetterIntent.class);
+                    if (SaveSharedPreference.getPrefLink(this) != null){
+                        callBackgroundService(AlarmSetterIntent.class);
+                    }
                 }else{
                     final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
                     BackgroundScheduler.cancelOutstandingIntents(this, alarmMgr);
                 }
             }else{
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+                    startSwitch.setChecked(false);
+                }
                 final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
